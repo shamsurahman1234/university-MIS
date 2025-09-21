@@ -2,61 +2,65 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Department;
 use App\Models\Faculty;
-use Illuminate\Http\Request;
+use App\Models\University;
 
 class DepartmentController extends Controller
 {
-    // Display list of departments
     public function index()
     {
-        // Eager load faculty and university
         $departments = Department::with('faculty.university')->get();
         return view('departments.index', compact('departments'));
     }
 
-    // Show form to create new department
     public function create()
     {
-        $faculties = Faculty::with('university')->get(); // load faculties with their university
-        return view('departments.create', compact('faculties'));
+        $universities = University::all();
+        $faculties = Faculty::all();
+        return view('departments.create', compact('universities', 'faculties'));
     }
 
-    // Store new department
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'university_id' => 'required|exists:universities,id',
             'faculty_id' => 'required|exists:faculties,id',
         ]);
 
-        Department::create($request->all());
+        Department::create([
+            'name' => $request->name,
+            'faculty_id' => $request->faculty_id,
+        ]);
 
-        return redirect()->route('departments.index')->with('success', 'Department added successfully.');
+        return redirect()->route('departments.index')->with('success', 'Department created successfully.');
     }
 
-    // Show form to edit a department
     public function edit(Department $department)
     {
-        $faculties = Faculty::with('university')->get();
-        return view('departments.edit', compact('department', 'faculties'));
+        $universities = University::all();
+        $faculties = Faculty::all();
+        return view('departments.edit', compact('department', 'universities', 'faculties'));
     }
 
-    // Update department
     public function update(Request $request, Department $department)
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'university_id' => 'required|exists:universities,id',
             'faculty_id' => 'required|exists:faculties,id',
         ]);
 
-        $department->update($request->all());
+        $department->update([
+            'name' => $request->name,
+            'faculty_id' => $request->faculty_id,
+        ]);
 
         return redirect()->route('departments.index')->with('success', 'Department updated successfully.');
     }
 
-    // Delete department
     public function destroy(Department $department)
     {
         $department->delete();
