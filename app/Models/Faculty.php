@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -8,7 +9,6 @@ class Faculty extends Model
 {
     use HasFactory;
 
-    // Only real database fields
     protected $fillable = ['name', 'university_id'];
 
     public function university()
