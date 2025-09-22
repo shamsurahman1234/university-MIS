@@ -11,9 +11,14 @@ class DepartmentController extends Controller
 {
     public function index()
     {
-        $departments = Department::with('faculty.university')->get();
+        // load relations and paginate (10 per page)
+        $departments = Department::with('faculty.university')
+                                 ->orderBy('id', 'desc')
+                                 ->paginate(10);
+
         return view('departments.index', compact('departments'));
     }
+
 
     public function create()
     {
