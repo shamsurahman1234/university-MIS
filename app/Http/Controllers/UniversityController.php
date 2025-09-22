@@ -8,7 +8,9 @@ class UniversityController extends Controller
 {
     public function index()
     {
-        $universities = University::all();
+        // Use paginate(10) so the view receives a Paginator (not a Collection)
+        $universities = University::orderBy('id', 'desc')->paginate(10);
+
         return view('universities.index', compact('universities'));
     }
 
