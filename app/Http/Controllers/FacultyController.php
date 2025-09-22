@@ -10,7 +10,9 @@ class FacultyController extends Controller
 {
     public function index()
     {
-        $faculties = Faculty::with('university')->get();
+        // Load university relation and paginate 10 records per page
+        $faculties = Faculty::with('university')->orderBy('id', 'desc')->paginate(10);
+
         return view('faculties.index', compact('faculties'));
     }
 
